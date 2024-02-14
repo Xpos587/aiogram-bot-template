@@ -1,11 +1,11 @@
 [tool.poetry]
-name = "aiogram-bot-template"
+name = "aiogram-template"
 version = "1.0.0"
 license = "GNU General Public License"
 description = "Telegram Bot Template"
 authors = ["Xpos587"]
 readme = "README.md"
-repository = "https://github.com/Xpos587/aiogram-bot-template"
+repository = "https://github.com/Xpos587/aiogram-template"
 packages = [
     { include = ".", from = "." },
 ]
@@ -23,6 +23,7 @@ msgspec             = "^0.18.5"
 pydantic            = "^2.5.3"
 pydantic_settings   = "^2.1.0"
 fluent_runtime      = "^0.4.0"
+types-pyyaml        = "^6.0.12.12"
 tzdata              = "^2024.1"
 
 [tool.poetry.group.dev.dependencies]

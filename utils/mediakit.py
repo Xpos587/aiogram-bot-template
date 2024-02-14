@@ -4,8 +4,9 @@ from os import PathLike
 from typing import Any, Literal, Optional, Union
 
 import aiohttp
-from aiogram import Bot
 from yaml import safe_load
+
+from bot import Bot
 
 
 def assets(dir: Literal["yaml", "image", "csv"], item: str) -> str:

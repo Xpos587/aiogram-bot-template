@@ -2,4 +2,5 @@ from enum import StrEnum, auto
 
 
 class CallbackQueryType(StrEnum):
-    SUPPORT = auto()
+    ORANGE = auto()
+    LIME = auto()

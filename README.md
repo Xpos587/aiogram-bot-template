@@ -1,11 +1,11 @@
-# ABT - Aiogram Bot Template
+# Aiogram Template
 
 ## Deployment
 
 1. Setup [poetry](https://pypi.org/project/poetry/) and install requirements (`poetry install`)
 2. Rename `.env.dist` to `.env` and configure it
 3. Run database migrations with `make migrate` command
-4. Before running the bot (`python -m bot`), make sure you are in a virtual environment by running the command `make shell`.
+4. Before running the bot (`python -m bot`), make sure you are in a virtual environment by running the command `poetry shell`.
 5. Optional: configure `telegram-bot.service` ([» Read more](https://gist.github.com/comhad/de830d6d1b7ae1f165b925492e79eac8))
 
 ## Development
