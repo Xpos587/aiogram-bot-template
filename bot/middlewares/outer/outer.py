@@ -9,22 +9,21 @@ from aiogram.types import CallbackQuery, Message, TelegramObject
 from bot.filters import ChatStates
 
 
-class IntermediateMiddleware(BaseMiddleware):
+class OuterMiddleware(BaseMiddleware):
     async def __call__(
         self,
         handler: Callable[[TelegramObject, dict[str, Any]], Awaitable[Any]],
         event: TelegramObject,
         data: dict[str, Any],
     ) -> Optional[Any]:
-        state: Optional[FSMContext] = data.get("state")
+        state: FSMContext = data["state"]
 
-        if state is not None:
-            if isinstance(event, CallbackQuery):
+        if isinstance(event, CallbackQuery):
+            await state.set_state(ChatStates.ReadyToRespond)
+        elif isinstance(event, Message):
+            message: Message = event
+            if message.text and message.text.startswith("/"):
+                await message.delete()
                 await state.set_state(ChatStates.ReadyToRespond)
-            elif isinstance(event, Message):
-                message: Message = event
-                if message.text and message.text.startswith("/"):
-                    await message.delete()
-                    await state.set_state(ChatStates.ReadyToRespond)
 
         return await handler(event, data)
