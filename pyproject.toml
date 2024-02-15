@@ -27,10 +27,10 @@ types-pyyaml        = "^6.0.12.12"
 tzdata              = "^2024.1"
 
 [tool.poetry.group.dev.dependencies]
-libcst      = "^1.1.0"
-black       = "^23.12.1"
-mypy        = "^1.8.0"
-ruff        = "^0.1.14"
+libcst              = "^1.1.0"
+black               = "^23.12.1"
+mypy                = "^1.8.0"
+ruff                = "^0.1.14"
 
 [tool.black]
 line_length = 80
@@ -39,6 +39,7 @@ exclude = "\\.?venv|\\.?tests"
 [tool.ruff]
 target-version = "py38"
 line-length = 80
+ignore = ["N817"]
 select = [
     "C",
     "DTZ",

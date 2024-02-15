@@ -4,9 +4,8 @@ from os import PathLike
 from typing import Any, Literal, Optional, Union
 
 import aiohttp
+from aiogram import Bot
 from yaml import safe_load
-
-from bot import Bot
 
 
 def assets(dir: Literal["yaml", "image", "csv"], item: str) -> str:
@@ -45,7 +44,7 @@ async def get_content(bot: Bot, file_id: str) -> Optional[bytes]:
         return None
 
 
-async def img_to_base64(image_bytes: bytes) -> str:
+async def image_to_base64(image_bytes: bytes) -> str:
     """
     Convert image bytes to a base64 encoded string.
 
