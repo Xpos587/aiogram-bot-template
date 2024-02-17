@@ -15,7 +15,11 @@ from aiogram.exceptions import (
     TelegramRetryAfter,
     TelegramServerError,
 )
-from aiogram.methods import AnswerCallbackQuery, Response, TelegramMethod
+from aiogram.methods import (
+    AnswerCallbackQuery,
+    Response,
+    TelegramMethod,
+)
 from aiogram.methods.base import TelegramType
 from aiogram.utils.backoff import Backoff, BackoffConfig
 
@@ -23,24 +27,20 @@ logger: logging.Logger = logging.getLogger(__name__)
 DEFAULT_MAX_RETRIES: Final[int] = 7
 
 
-async def bad_req(
+async def handle_telegram_error(
     e: TelegramBadRequest,
     bot: Bot,
     make_request: NextRequestMiddlewareType[TelegramType],
     method: TelegramMethod[TelegramType],
-) -> None:
+):
     if "message is not modified" in str(e):
         logger.info("Message not modified, skipping retry.")
-    elif "query is too old" in str(e):
+    if "query is too old" in str(e):
         logger.info("Query is too old, skipping retry.")
-        pass
-    elif "can't parse entities" in str(e) and hasattr(method, "parse_mode"):
-        original_parse_mode = method.parse_mode
+    if "can't parse entities" in str(e):
         method.parse_mode = None
-        try:
-            await make_request(bot, method)
-        finally:
-            method.parse_mode = original_parse_mode
+        return await make_request(bot, method)
+    return None
 
 
 class RetryRequestMiddleware(BaseRequestMiddleware):
@@ -70,6 +70,11 @@ class RetryRequestMiddleware(BaseRequestMiddleware):
             retries += 1
             try:
                 return await make_request(bot, method)
+            except TelegramBadRequest as e:
+                return await handle_telegram_error(
+                    e, bot, make_request, method
+                )
+
             except TelegramRetryAfter as e:
                 if isinstance(method, AnswerCallbackQuery):
                     raise
@@ -83,10 +88,6 @@ class RetryRequestMiddleware(BaseRequestMiddleware):
                 )
                 backoff.reset()
                 await asyncio.sleep(e.retry_after)
-
-            except TelegramBadRequest as e:
-                await bad_req(e, bot, make_request, method)
-                raise
 
             except (
                 TelegramServerError,

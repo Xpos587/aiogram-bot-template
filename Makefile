@@ -35,11 +35,11 @@ migration:
 
 .PHONY: migrate
 migrate:
-	poetry run alembic upgrade head
+	@poetry run alembic upgrade head
 
 .PHONY: rollback
 rollback:
-	poetry run alembic downgrade -1
+	@poetry run alembic downgrade -1
 
 .PHONY: run
 run:
