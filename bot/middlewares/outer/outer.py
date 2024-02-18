@@ -20,8 +20,10 @@ class OuterMiddleware(BaseMiddleware):
 
         if isinstance(event, CallbackQuery):
             await state.set_state(ChatStates.ReadyToRespond)
-        elif isinstance(event, Message):
-            message: Message = event
+        elif hasattr(event, "message") and isinstance(
+            getattr(event, "message", None), Message
+        ):
+            message: Message = getattr(event, "message")
             if message.text and message.text.startswith("/"):
                 await message.delete()
                 await state.set_state(ChatStates.ReadyToRespond)

@@ -6,12 +6,10 @@ from aiogram.methods import TelegramMethod
 from aiogram.types import ErrorEvent
 from aiogram_i18n import I18nContext
 
-from bot.exceptions import BotError
-
 router: Final[Router] = Router(name=__name__)
 
 
-@router.error(ExceptionTypeFilter(BotError), F.update.message)
+@router.error(ExceptionTypeFilter(Exception), F.update.message)
 async def handle_some_error(
     error: ErrorEvent, i18n: I18nContext
 ) -> TelegramMethod[Any]:

@@ -15,6 +15,7 @@ from bot.enums import Locale
 from bot.handlers import admin, extra, main
 from bot.middlewares import (
     DBSessionMiddleware,
+    OuterMiddleware,
     RetryRequestMiddleware,
     UserManager,
     UserMiddleware,
@@ -45,6 +46,7 @@ def _setup_outer_middlewares(
 
     dispatcher.update.outer_middleware(DBSessionMiddleware(session_pool=pool))
     dispatcher.update.outer_middleware(UserMiddleware())
+    dispatcher.update.outer_middleware(OuterMiddleware())
     i18n_middleware.setup(dispatcher=dispatcher)
 
 

@@ -71,9 +71,7 @@ class RetryRequestMiddleware(BaseRequestMiddleware):
             try:
                 return await make_request(bot, method)
             except TelegramBadRequest as e:
-                return await handle_telegram_error(
-                    e, bot, make_request, method
-                )
+                return await handle_telegram_error(e, bot, make_request, method)
 
             except TelegramRetryAfter as e:
                 if isinstance(method, AnswerCallbackQuery):
