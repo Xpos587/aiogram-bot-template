@@ -15,11 +15,7 @@ from aiogram.exceptions import (
     TelegramRetryAfter,
     TelegramServerError,
 )
-from aiogram.methods import (
-    AnswerCallbackQuery,
-    Response,
-    TelegramMethod,
-)
+from aiogram.methods import AnswerCallbackQuery, Response, TelegramMethod
 from aiogram.methods.base import TelegramType
 from aiogram.utils.backoff import Backoff, BackoffConfig
 

@@ -2,13 +2,12 @@ from aiogram import Bot, Dispatcher
 
 from bot.factories import create_bot, create_dispatcher
 from bot.runners import run_polling, run_webhook
-from bot.settings import Settings
+from bot.settings import settings
 from utils.loggers import setup_logger
 
 
 def main() -> None:
     setup_logger()
-    settings: Settings = Settings()
     dispatcher: Dispatcher = create_dispatcher(settings=settings)
     bot: Bot = create_bot(settings=settings)
     if settings.use_webhook:

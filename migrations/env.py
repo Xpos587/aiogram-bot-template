@@ -6,7 +6,7 @@ from sqlalchemy import MetaData
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
 
-from bot.settings import Settings
+from bot.settings import settings
 from services.database.models import Base
 from utils.loggers import setup_logger
 
@@ -31,7 +31,6 @@ target_metadata: MetaData = Base.metadata
 
 
 def _get_postgres_dsn() -> str:
-    settings: Settings = Settings()
     return settings.build_postgres_dsn()
 
 

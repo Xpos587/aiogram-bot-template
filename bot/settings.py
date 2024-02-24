@@ -53,3 +53,6 @@ class Settings(BaseSettings):
             for admin_id in self.admin_ids.split(",")
             if admin_id.isdigit()
         ]
+
+
+settings = Settings()

@@ -4,11 +4,10 @@ from aiogram import F
 from aiogram.enums import ChatType
 from aiogram.filters import Filter
 
-from bot.settings import Settings
+from bot.settings import settings
 
 from .magic_data import MagicData
 
-settings: Settings = Settings()
 admin_ids = settings.get_admin_ids()
 
 

@@ -3,9 +3,8 @@ from time import time
 
 from zoneinfo import ZoneInfo
 
-from bot.settings import Settings
+from bot.settings import settings
 
-settings = Settings()
 tz = ZoneInfo(settings.time_zone)
 
 
