@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from typing import Final
+from typing import Any, Final
 
 from aiogram import Bot
 from aiogram.client.session.middlewares.base import (
@@ -28,7 +28,7 @@ async def handle_telegram_error(
     bot: Bot,
     make_request: NextRequestMiddlewareType[TelegramType],
     method: TelegramMethod[TelegramType],
-):
+) -> Any:
     if "message is not modified" in str(e):
         logger.info("Message not modified, skipping retry.")
     if "query is too old" in str(e):

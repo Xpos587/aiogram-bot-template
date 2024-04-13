@@ -1,8 +1,8 @@
-"""created_table
+"""init
 
 Revision ID: 001
 Revises:
-Create Date: 2024-02-12 20:35:52.842599
+Create Date: 2024-04-13 12:41:00.167098
 
 """
 from typing import Optional, Sequence

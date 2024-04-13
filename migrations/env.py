@@ -2,7 +2,7 @@ import asyncio
 
 from alembic import context
 from alembic.config import Config
-from sqlalchemy import MetaData
+from sqlalchemy import URL, MetaData
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
 
@@ -24,14 +24,15 @@ setup_logger()
 # target_metadata = mymodel.Base.metadata
 target_metadata: MetaData = Base.metadata
 
+
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
 
 
-def _get_postgres_dsn() -> str:
-    return settings.build_postgres_dsn()
+def _get_postgres_dsn() -> URL:
+    return settings.postgres.build_dsn()
 
 
 def run_migrations_offline() -> None:

@@ -26,7 +26,7 @@ class Button:
 
 
 def common_keyboard(
-    rows: list[Union[tuple[Button, ...], Button]],
+    rows: Union[list[Union[tuple[Button, ...], Button]]],
     is_inline: bool = True,
     is_persistent: Optional[bool] = None,
     resize_keyboard: bool = True,
@@ -44,6 +44,10 @@ def common_keyboard(
         "input_field_placeholder": input_field_placeholder,
         "selective": selective,
     }
+
+    if isinstance(rows, Button):
+        rows = [rows]
+
     if is_inline:
         inline_keyboard = InlineKeyboardBuilder()
         for row in rows:

@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from .base import BaseRepository
+from ..models import Base
 from .user import UserRepository
 
 
-class Repository(BaseRepository):
+class Repository:
     """
     The general repository.
     """
@@ -14,5 +14,14 @@ class Repository(BaseRepository):
     user: UserRepository
 
     def __init__(self, session: AsyncSession) -> None:
-        super().__init__(session=session)
+        self._session = session
         self.user = UserRepository(session=session)
+
+    async def commit(self, *instances: Base) -> None:
+        self._session.add_all(instances)
+        await self._session.commit()
+
+    async def delete(self, *instances: Base) -> None:
+        for instance in instances:
+            await self._session.delete(instance)
+        await self._session.commit()

@@ -10,8 +10,8 @@ def main() -> None:
     setup_logger()
     dispatcher: Dispatcher = create_dispatcher(settings=settings)
     bot: Bot = create_bot(settings=settings)
-    if settings.use_webhook:
-        return run_webhook(dispatcher=dispatcher, bot=bot, settings=settings)
+    if settings.webhook.use:
+        return run_webhook(dispatcher=dispatcher, bot=bot)
     return run_polling(dispatcher=dispatcher, bot=bot)
 
 

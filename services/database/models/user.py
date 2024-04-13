@@ -13,12 +13,12 @@ from .base import Base, Int64, TimestampMixin
 class DBUser(Base, TimestampMixin):
     __tablename__ = "users"
 
-    id: Mapped[Int64] = mapped_column(primary_key=True)
-    name: Mapped[str]
+    id: Mapped[Int64] = mapped_column(primary_key=True, nullable=False)
+    name: Mapped[str] = mapped_column(String, nullable=False)
     locale: Mapped[str] = mapped_column(
-        String(length=2), default=Locale.DEFAULT
+        String(length=2), default=Locale.DEFAULT, nullable=False
     )
-    notifications: Mapped[bool] = mapped_column(default=False)
+    notifications: Mapped[bool] = mapped_column(default=False, nullable=False)
 
     @property
     def url(self) -> str:

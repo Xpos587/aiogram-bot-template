@@ -9,6 +9,8 @@ from aiogram_i18n import I18nMiddleware
 if TYPE_CHECKING:
     from services.database import DBUser, Repository
 
+from utils.loggers import database as logger
+
 
 class UserMiddleware(BaseMiddleware):
     async def __call__(
@@ -25,9 +27,7 @@ class UserMiddleware(BaseMiddleware):
             return await handler(event, data)
 
         repository: Repository = data["repository"]
-        user: Optional[DBUser] = await repository.user.get(
-            user_id=aiogram_user.id
-        )
+        user: Optional[DBUser] = await repository.user.get(id=aiogram_user.id)
         if user is None:
             i18n: I18nMiddleware = data["i18n_middleware"]
             user = await repository.user.create_from_telegram(
@@ -39,6 +39,11 @@ class UserMiddleware(BaseMiddleware):
                 ),
                 chat=chat,
             )
-        data["user"] = user
+            logger.info(
+                "New user in database: %s (%d)",
+                aiogram_user.full_name,
+                aiogram_user.id,
+            )
 
+        data["user"] = user
         return await handler(event, data)

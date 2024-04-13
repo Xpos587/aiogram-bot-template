@@ -1,18 +1,14 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 from aiogram import Bot, Dispatcher, loggers
 from aiogram.webhook import aiohttp_server as server
 from aiohttp import web
 
+from bot.settings import settings
 from utils.loggers import MultilineLogger
 
-if TYPE_CHECKING:
-    from bot.settings import Settings
 
-
-async def polling_startup(bots: list[Bot], settings: Settings) -> None:
+async def polling_startup(bots: list[Bot]) -> None:
     for bot in bots:
         await bot.delete_webhook(
             drop_pending_updates=settings.drop_pending_updates
@@ -21,26 +17,24 @@ async def polling_startup(bots: list[Bot], settings: Settings) -> None:
         loggers.dispatcher.info("Updates skipped successfully")
 
 
-async def webhook_startup(
-    dispatcher: Dispatcher, bot: Bot, settings: Settings
-) -> None:
-    url: str = settings.build_webhook_url()
+async def webhook_startup(dispatcher: Dispatcher, bot: Bot) -> None:
+    url: str = settings.webhook.build_url()
     if await bot.set_webhook(
         url=url,
         allowed_updates=dispatcher.resolve_used_update_types(),
-        secret_token=settings.webhook_secret_token,
+        secret_token=settings.webhook.secret_token.get_secret_value(),
         drop_pending_updates=settings.drop_pending_updates,
     ):
         return loggers.webhook.info(
-            "Bot webhook successfully set on url '%s'", url
+            "Main bot webhook successfully set on url '%s'", url
         )
     return loggers.webhook.error(
         "Failed to set main bot webhook on url '%s'", url
     )
 
 
-async def webhook_shutdown(bot: Bot, settings: Settings) -> None:
-    if not settings.reset_webhook:
+async def webhook_shutdown(bot: Bot) -> None:
+    if not settings.webhook.reset:
         return
     if await bot.delete_webhook():
         loggers.webhook.info("Dropped main bot webhook.")
@@ -54,24 +48,24 @@ def run_polling(dispatcher: Dispatcher, bot: Bot) -> None:
     return dispatcher.run_polling(bot)
 
 
-def run_webhook(dispatcher: Dispatcher, bot: Bot, settings: Settings) -> None:
-    app: web.Application = web.Application()
-    dispatcher.startup.register(webhook_startup)
-    dispatcher.shutdown.register(webhook_shutdown)
-
+def run_webhook(dispatcher: Dispatcher, bot: Bot) -> None:
+    app = web.Application()
     server.SimpleRequestHandler(
         dispatcher=dispatcher,
         bot=bot,
-        secret_token=settings.webhook_secret_token,
-    ).register(app, path=settings.webhook_path)
+        secret_token=settings.webhook.secret_token.get_secret_value(),
+    ).register(app, path=settings.webhook.path)
     server.setup_application(
-        app, dispatcher, bot=bot, reset_webhook=settings.reset_webhook
+        app, dispatcher, bot=bot, reset_webhook=settings.webhook.reset
     )
     app.update(**dispatcher.workflow_data, bot=bot)
 
+    dispatcher.startup.register(webhook_startup)
+    dispatcher.shutdown.register(webhook_shutdown)
+
     return web.run_app(
         app=app,
-        host=settings.webhook_host,
-        port=settings.webhook_port,
+        host=settings.webhook.host,
+        port=settings.webhook.port,
         print=MultilineLogger(),
     )

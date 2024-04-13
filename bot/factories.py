@@ -12,7 +12,7 @@ from aiogram_i18n.cores import FluentRuntimeCore
 from redis.asyncio import ConnectionPool, Redis
 
 from bot.enums import Locale
-from bot.handlers import admin, extra, main
+from bot.handlers import admin, common, extra
 from bot.middlewares import (
     DBSessionMiddleware,
     OuterMiddleware,
@@ -31,7 +31,7 @@ def _setup_outer_middlewares(
     dispatcher: Dispatcher, settings: Settings
 ) -> None:
     pool = dispatcher["session_pool"] = create_pool(
-        dsn=settings.build_postgres_dsn(),
+        dsn=settings.postgres.build_dsn(),
         enable_logging=settings.sqlalchemy_logging,
     )
     i18n_middleware = dispatcher["i18n_middleware"] = I18nMiddleware(
@@ -61,11 +61,11 @@ def create_dispatcher(settings: Settings) -> Dispatcher:
     """
     redis: Redis = Redis(
         connection_pool=ConnectionPool(
-            host=settings.redis_host,
-            port=settings.redis_port,
-            db=settings.redis_db,
-            username=settings.redis_user,
-            password=settings.redis_password,
+            host=settings.redis.host,
+            port=settings.redis.port,
+            db=settings.redis.db,
+            username=settings.redis.user,
+            password=settings.redis.password.get_secret_value(),
         )
     )
 
@@ -77,7 +77,7 @@ def create_dispatcher(settings: Settings) -> Dispatcher:
         redis=redis,
         settings=settings,
     )
-    dispatcher.include_routers(admin.router, main.router, extra.router)
+    dispatcher.include_routers(admin.router, common.router, extra.router)
     _setup_outer_middlewares(dispatcher=dispatcher, settings=settings)
     _setup_inner_middlewares(dispatcher=dispatcher)
     return dispatcher

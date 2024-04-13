@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Final
+from typing import TYPE_CHECKING, Any, Final
 
 from aiogram import F, Router
 from aiogram.enums import ChatType
@@ -21,7 +21,7 @@ router.my_chat_member.filter(F.chat.type == ChatType.PRIVATE)
 @router.my_chat_member(ChatMemberUpdatedFilter(JOIN_TRANSITION))
 async def enable_notifications(
     _: ChatMemberUpdated, user: DBUser, repository: Repository
-) -> None:
+) -> Any:
     user.notifications = True
     await repository.commit(user)
 
@@ -29,6 +29,6 @@ async def enable_notifications(
 @router.my_chat_member(ChatMemberUpdatedFilter(LEAVE_TRANSITION))
 async def disable_notifications(
     _: ChatMemberUpdated, user: DBUser, repository: Repository
-) -> None:
+) -> Any:
     user.notifications = False
     await repository.commit(user)
