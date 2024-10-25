@@ -1,11 +1,13 @@
 from .database import DBSessionMiddleware
 from .i18n import UserManager
-from .outer import OuterMiddleware
+from .query import QueryMiddleware
+from .statecontrol import StateControlMiddleware
 from .user import UserMiddleware
 
 __all__ = [
     "DBSessionMiddleware",
     "UserManager",
     "UserMiddleware",
-    "OuterMiddleware",
+    "StateControlMiddleware",
+    "QueryMiddleware",
 ]

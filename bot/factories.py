@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 from aiogram import Bot, Dispatcher
 from aiogram.client.session.aiohttp import AiohttpSession
+from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.fsm.storage.redis import RedisStorage
 from aiogram.utils.callback_answer import CallbackAnswerMiddleware
@@ -15,12 +16,13 @@ from bot.enums import Locale
 from bot.handlers import admin, common, extra
 from bot.middlewares import (
     DBSessionMiddleware,
-    OuterMiddleware,
+    QueryMiddleware,
     RetryRequestMiddleware,
+    StateControlMiddleware,
     UserManager,
     UserMiddleware,
 )
-from services.database import create_pool
+from services.database.create_pool import create_pool
 from utils import mjson
 
 if TYPE_CHECKING:
@@ -46,7 +48,8 @@ def _setup_outer_middlewares(
 
     dispatcher.update.outer_middleware(DBSessionMiddleware(session_pool=pool))
     dispatcher.update.outer_middleware(UserMiddleware())
-    dispatcher.update.outer_middleware(OuterMiddleware())
+    dispatcher.update.outer_middleware(QueryMiddleware())
+    dispatcher.update.outer_middleware(StateControlMiddleware())
     i18n_middleware.setup(dispatcher=dispatcher)
 
 
@@ -78,8 +81,8 @@ def create_dispatcher(settings: Settings) -> Dispatcher:
         settings=settings,
     )
     dispatcher.include_routers(admin.router, common.router, extra.router)
-    _setup_outer_middlewares(dispatcher=dispatcher, settings=settings)
-    _setup_inner_middlewares(dispatcher=dispatcher)
+    _setup_outer_middlewares(dispatcher, settings)
+    _setup_inner_middlewares(dispatcher)
     return dispatcher
 
 
@@ -93,6 +96,8 @@ def create_bot(settings: Settings) -> Bot:
     session.middleware(RetryRequestMiddleware())
     return Bot(
         token=settings.bot_token.get_secret_value(),
-        parse_mode=ParseMode.HTML,
+        default=DefaultBotProperties(
+            parse_mode=ParseMode.HTML,
+        ),
         session=session,
     )

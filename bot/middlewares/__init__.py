@@ -1,6 +1,7 @@
 from .outer import (
     DBSessionMiddleware,
-    OuterMiddleware,
+    QueryMiddleware,
+    StateControlMiddleware,
     UserManager,
     UserMiddleware,
 )
@@ -10,6 +11,7 @@ __all__ = [
     "DBSessionMiddleware",
     "UserManager",
     "UserMiddleware",
+    "StateControlMiddleware",
     "RetryRequestMiddleware",
-    "OuterMiddleware",
+    "QueryMiddleware",
 ]

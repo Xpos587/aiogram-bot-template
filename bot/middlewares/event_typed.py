@@ -2,18 +2,17 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, ClassVar
 
 from aiogram import BaseMiddleware, Router
-
-from ..enums import MiddlewareEventType
+from aiogram.enums import UpdateType
 
 
 class EventTypedMiddleware(BaseMiddleware, ABC):
     if TYPE_CHECKING:
-        __event_types__: ClassVar[list[MiddlewareEventType]]
+        __event_types__: ClassVar[list[UpdateType]]
     else:
 
         @property
         @abstractmethod
-        def __event_types__(self) -> list[MiddlewareEventType]:
+        def __event_types__(self) -> list[UpdateType]:
             pass
 
     def setup_inner(self, router: Router) -> None:

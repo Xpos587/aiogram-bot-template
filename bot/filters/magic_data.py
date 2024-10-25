@@ -12,6 +12,7 @@ class MagicData(_MagicData):
         """
         if not isinstance(magic_data, MagicFilter):
             raise TypeError(
-                f"Expected MagicFilter got '{type(magic_data).__name__}'"
+                f"Expected MagicFilter got '{
+                            type(magic_data).__name__}'"
             )
         super().__init__(magic_data=magic_data)

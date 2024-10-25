@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from typing import Any, Final
+from typing import Final
 
 from aiogram import Bot
 from aiogram.client.session.middlewares.base import (
@@ -15,11 +15,15 @@ from aiogram.exceptions import (
     TelegramRetryAfter,
     TelegramServerError,
 )
-from aiogram.methods import AnswerCallbackQuery, Response, TelegramMethod
+from aiogram.methods import (
+    AnswerCallbackQuery,
+    Response,
+    TelegramMethod,
+)
 from aiogram.methods.base import TelegramType
 from aiogram.utils.backoff import Backoff, BackoffConfig
 
-logger: logging.Logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 DEFAULT_MAX_RETRIES: Final[int] = 7
 
 
@@ -28,7 +32,7 @@ async def handle_telegram_error(
     bot: Bot,
     make_request: NextRequestMiddlewareType[TelegramType],
     method: TelegramMethod[TelegramType],
-) -> Any:
+):
     if "message is not modified" in str(e):
         logger.info("Message not modified, skipping retry.")
     if "query is too old" in str(e):
@@ -75,8 +79,7 @@ class RetryRequestMiddleware(BaseRequestMiddleware):
                 if retries == self.max_retries:
                     raise
                 logger.error(
-                    "Request '%s' failed due to rate limit."
-                    "Sleeping %s seconds.",
+                    "Request '%s' failed due to rate limit." "Sleeping %s seconds.",
                     type(method).__name__,
                     e.retry_after,
                 )
